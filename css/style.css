@@ -20,7 +20,7 @@ html, body, .wrapper {
 }
 
 /*Стиль для блока с карточками товаров*/
-.products {
+.main {
     margin: 0 auto;
     width: 80%;
 }
@@ -30,4 +30,10 @@ html, body, .wrapper {
     display: inline-block;
     margin: 10px;
     width: 18rem;
+}
+
+h2 {
+    font-weight: normal;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
