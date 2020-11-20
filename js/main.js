@@ -27,6 +27,7 @@ let getRequest = (url) => {
  */
 class ProductsList {
     #goods;
+    #filteredGoods;
     #allProducts;
 
     /**
@@ -36,8 +37,21 @@ class ProductsList {
     constructor(container = '.main') {
         this.container = container; // css-класс блока товаров
         this.#goods = []; // список товаров
+        this.#filteredGoods = []; // список отфильтрованных по поиску товаров
         this.#allProducts = []; // список экземпляров класса ProductItem
         this.#fetchGoods(); // заполняем список товаров goods
+    }
+
+    /**
+     * Метод вычисляет суммарную стоимость всех товаров в списке товаров.
+     * @return: суммарная стоимость всех товаров в списке.
+     */
+    #calculateTotalPrice() {
+        let totalPrice = 0;
+        for (let product of this.#filteredGoods) {
+            totalPrice += product.price;
+        }
+        return totalPrice;
     }
 
     /**
@@ -47,10 +61,9 @@ class ProductsList {
         getRequest(`${API}catalogData.json`)
             .then((data) => {
                 this.#goods = JSON.parse(data);
+                this.#filteredGoods = JSON.parse(data);
                 // Отображаем товары на странице
                 this.#render();
-                // Показываем суммарную стоимость товаров
-                this.#showTotalPrice();
             })
             .catch((err) => console.log(err));
     }
@@ -61,24 +74,17 @@ class ProductsList {
     #render() {
         // Получаем блок для списка всех товаров
         const container = document.querySelector(this.container);
+        container.innerHTML = '';
+        let codeHTML = '';
         // Вставляем в блок все товары
-        for (let product of this.#goods) {
+        for (let product of this.#filteredGoods) {
             const productObject = new ProductItem(product);
             this.#allProducts.push(productObject);
-            container.insertAdjacentHTML('beforeend', productObject.getHTMLString());
+            codeHTML += productObject.getHTMLString();
         }
-    }
-
-    /**
-     * Метод вычисляет суммарную стоимость всех товаров в списке товаров.
-     * @return: суммарная стоимость всех товаров в списке.
-     */
-    #calculateTotalPrice() {
-        let totalPrice = 0;
-        for (let product of this.#allProducts) {
-            totalPrice += product.price;
-        }
-        return totalPrice;
+        container.insertAdjacentHTML('beforeend', codeHTML);
+        // Показываем суммарную стоимость товаров
+        this.#showTotalPrice();
     }
 
     /**
@@ -89,6 +95,16 @@ class ProductsList {
         const container = document.querySelector(this.container);
         // Вставляем в блок суммарную стоимость
         container.insertAdjacentHTML("afterbegin", `<h2>Суммарная стоимость всех товаров ${this.#calculateTotalPrice()}</h2>`);
+    }
+
+    /**
+     * Метод фильтрует товары по поиску, введенному пользователем.
+     * @param searchWord: слово для поиска в названиях товаров.
+     */
+    filterGoods(searchWord) {
+        const regExp = new RegExp(searchWord, 'i');
+        this.#filteredGoods = this.#goods.filter(good => regExp.test(good.product_name));
+        this.#render();
     }
 
     /**
@@ -149,6 +165,34 @@ class Basket {
     }
 
     /**
+     * Метод проверяет, есть ли в корзине товар.
+     * @param id: Id товара.
+     * @return: товар, найденный в корзине, null иначе.
+     */
+    #checkInBasket(id) {
+        for (let item of this.#allProducts) {
+            if (id == item.id)
+                return item;
+        }
+        return null;
+    }
+
+    /**
+     * Метод отображает корзину с товарами.
+     */
+    #render() {
+        // Получаем блок для списка всех товаров
+        const container = document.querySelector(this.container);
+        container.innerHTML = '';
+        // Вставляем в блок все товары
+        for (let product of this.#goods) {
+            const productObject = new ProductInBasket(product);
+            this.#allProducts.push(productObject);
+            container.insertAdjacentHTML('beforeend', productObject.getHTMLString());
+        }
+    }
+
+    /**
      * Метод добавляет единицу товара в корзину.
      * @param btn: кнопка, по которой кликнули, чтобы добавить товар в корзину.
      */
@@ -163,6 +207,22 @@ class Basket {
             }
         }
         return false;
+    }
+
+    /**
+     * Метод увеличивает/уменьшает на 1 количество товара из корзины.
+     * @param btn: кнопка, по которой кликнули.
+     */
+    changeNumber(btn) {
+        let [id, change] = btn.id.split(' ');
+        let product = this.#checkInBasket(id);
+        // Делаем запрос на добавление или уменьшение единицы товара и в случае
+        // положительного ответа отображаем изменение в карточке товара
+        if (change == '+' && this.addProduct(btn))
+            product.increase();
+        if (change == '-' && this.deleteProduct(btn))
+            product.decrease();
+        product.renderChanges();
     }
 
     /**
@@ -197,52 +257,6 @@ class Basket {
             this.#render();
         }
     }
-
-    /**
-     * Метод проверяет, есть ли в корзине товар.
-     * @param id: Id товара.
-     * @return: товар, найденный в корзине, null иначе.
-     */
-    #checkInBasket(id) {
-        for (let item of this.#allProducts) {
-            if (id == item.id)
-                return item;
-        }
-        return null;
-    }
-
-    /**
-     * Метод отображает корзину с товарами.
-     */
-    #render() {
-        // Получаем блок для списка всех товаров
-        const container = document.querySelector(this.container);
-        container.innerHTML = '';
-        // Вставляем в блок все товары
-        console.log(this.#goods);
-        for (let product of this.#goods) {
-            console.log(product);
-            const productObject = new ProductInBasket(product);
-            this.#allProducts.push(productObject);
-            container.insertAdjacentHTML('beforeend', productObject.getHTMLString());
-        }
-    }
-
-    /**
-     * Метод увеличивает/уменьшает на 1 количество товара из корзины.
-     * @param btn: кнопка, по которой кликнули.
-     */
-    changeNumber(btn) {
-        let [id, change] = btn.id.split(' ');
-        let product = this.#checkInBasket(id);
-        // Делаем запрос на добавление или уменьшение единицы товара и в случае
-        // положительного ответа отображаем изменение в карточке товара
-        if (change == '+' && this.addProduct(btn))
-            product.increase();
-        if (change == '-' && this.deleteProduct(btn))
-            product.decrease();
-        product.renderChanges();
-    }
 }
 
 /**
@@ -259,10 +273,11 @@ class ProductInBasket extends ProductItem {
     }
 
     /**
-     * Метод увеличивает на 1 количество товара.
+     * Метод вычисляет суммарную стоимость товара из корзины.
+     * @return: суммарная стоимость товара из корзины.
      */
-    increase() {
-        this.number++;
+    #calculateTotalSum() {
+        return this.price * this.number;
     }
 
     /**
@@ -290,6 +305,13 @@ class ProductInBasket extends ProductItem {
     }
 
     /**
+     * Метод увеличивает на 1 количество товара.
+     */
+    increase() {
+        this.number++;
+    }
+
+    /**
      * Метод отображает изменения в количестве штук товара из корзины.
      */
     renderChanges() {
@@ -298,19 +320,14 @@ class ProductInBasket extends ProductItem {
         totalPrice.innerText = `Стоимость: ${this.#calculateTotalSum()}`;
         number.innerText = `Количество: ${this.number}`;
     }
-
-    /**
-     * Метод вычисляет суммарную стоимость товара из корзины.
-     * @return: суммарная стоимость товара из корзины.
-     */
-    #calculateTotalSum() {
-        return this.price * this.number;
-    }
 }
 
 // Создаем объект со списком товаров на странице
 var productList = new ProductsList();
 // Создаем корзину
 var basket = new Basket();
-// Получаем кнопку Корзина
-let basketBtn = document.getElementById('basketBtn');
+// Получаем кнопку для поиска и задаем для нее функцию, которая будет вызываться при клике
+document.getElementById('searchBtn').addEventListener('click', e => {
+    let searchWord = document.querySelector('input[type="search"]').value;
+    productList.filterGoods(searchWord);
+});

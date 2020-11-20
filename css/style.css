@@ -37,3 +37,9 @@ h2 {
     margin-top: 20px;
     margin-bottom: 20px;
 }
+
+/*Стиль формы для обратной связи*/
+.form {
+    margin: 20px auto;
+    width: 70%;
+}
