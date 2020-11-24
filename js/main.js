@@ -165,19 +165,6 @@ class Basket {
     }
 
     /**
-     * Метод проверяет, есть ли в корзине товар.
-     * @param id: Id товара.
-     * @return: товар, найденный в корзине, null иначе.
-     */
-    #checkInBasket(id) {
-        for (let item of this.#allProducts) {
-            if (id == item.id)
-                return item;
-        }
-        return null;
-    }
-
-    /**
      * Метод отображает корзину с товарами.
      */
     #render() {
@@ -215,7 +202,8 @@ class Basket {
      */
     changeNumber(btn) {
         let [id, change] = btn.id.split(' ');
-        let product = this.#checkInBasket(id);
+        // Находим товар, количество которого изменилось
+        let product = this.#allProducts.find(item => item.id == id);
         // Делаем запрос на добавление или уменьшение единицы товара и в случае
         // положительного ответа отображаем изменение в карточке товара
         if (change == '+' && this.addProduct(btn))
