@@ -1,0 +1,45 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body, .wrapper {
+    height: 100%;
+}
+
+.content {
+    box-sizing: border-box;
+    min-height: 100%;
+    padding-bottom: 90px;
+    text-align: center;
+}
+
+.footer {
+    height: 80px;
+    margin-top: -80px;
+}
+
+/*Стиль для блока с карточками товаров*/
+.main {
+    margin: 0 auto;
+    width: 80%;
+}
+
+/*Стиль для карточек с товарами*/
+.card {
+    display: inline-block;
+    margin: 10px;
+    width: 18rem;
+}
+
+h2 {
+    font-weight: normal;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/*Стиль формы для обратной связи*/
+.form {
+    margin: 20px auto;
+    width: 70%;
+}
