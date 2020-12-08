@@ -1,0 +1,44 @@
+[
+    {
+        "id_product": 1,
+        "product_name": "Ноутбук",
+        "price": 45600,
+        "img": "img/notebook.jpg"
+    },
+    {
+        "id_product": 2,
+        "product_name": "Мышка",
+        "price": 1190,
+        "img": "img/mouse.jpg"
+    },
+    {
+        "id_product": 3,
+        "product_name": "Джойстик",
+        "price": 3400,
+        "img": "img/gamepad.jpg"
+    },
+    {
+        "id_product": 4,
+        "product_name": "Жесткий диск",
+        "price": 4690,
+        "img": "img/hdd.jpg"
+    },
+    {
+        "id_product": 5,
+        "product_name": "Клавиатура",
+        "price": 510,
+        "img": "img/keyboard.jpg"
+    },
+    {
+        "id_product": 6,
+        "product_name": "Монитор",
+        "price": 8190,
+        "img": "img/monitor.jpg"
+    },
+    {
+        "id_product": 7,
+        "product_name": "Мышка",
+        "price": 3400,
+        "img": "img/speaker.jpg"
+    }
+]
