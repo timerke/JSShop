@@ -117,7 +117,7 @@ app.delete('/api/basket/:id', (req, res) => {
 /**
  * Запуск сервера на порте port.
  */
-const port = 5555;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Listening ${port} port...`);
 });
