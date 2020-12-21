@@ -4,12 +4,13 @@
   "description": "JSShop",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "author": "Timerke",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "jasmine": "^3.6.3",
     "node-static": "^0.7.11"
   }
 }
